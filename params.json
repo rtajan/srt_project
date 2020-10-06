@@ -1,0 +1,85 @@
+{
+	"Simulation" : {
+		"eb_n0_db_min"  : 0,
+		"eb_n0_db_max"  : 10,
+		"eb_n0_db_step" : 0.5
+	},
+	"Channel" : {
+		"frequency_offset" : 0,
+		"phase_offset"     : 0,
+		"gain"             : 1,
+		"delay_in_secs"    : 0
+	},
+	"Source": {
+		"type"    : "file",
+		"file_name": "video_src.ts",
+		"data_type": "uint8"
+	},
+	"Sink": {
+		"file_name": "fifo_out",
+		"data_type": "uint8"
+	},
+	"Waveform": {
+		"sample_rate"           : 1.0E+6,
+		"symbol_rate"           : 2.5E+5,
+		"samples_per_symbol"    : 4,
+		"rolloff_factor"        : 0.35,
+		"filter_span_in_symbols": 16,
+		"decimation_factor"     : 4,
+		"decimation_offset"     : 0
+	},
+	"Frame": {
+		"pkt_oct_sz": 188,
+		"pkt_per_frm": 8
+	},
+	"Modem": {
+		"name"            : "PSK",
+		"modulation_order": 4,
+		"phase_offset"    : 0.78539816339744828,
+		"symbol_mapping"  : "Gray",
+		"bit_input"       : true,
+		"bit_output"      : true,
+		"decision_method" : "Log-likelihood ratio",
+		"variance"        : 1
+	},
+	"Scrambler": {
+		"calculation_base"  : 2,
+		"polynomial"        : "1 + z^-14 + z^-15",
+		"initial_conditions": [ 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0 ]
+	},
+	"Convolutional_codec": {
+		"Encoder" : {
+			"constraint_length": 7,
+			"code_generator"   : [ 171, 133 ],
+			"termination_method": "Continuous"
+		},
+		"Decoder" : {
+			"termination_method": "Continuous",
+			"traceback_length"  : 35,
+			"input_format"      : "Unquantized"
+		}
+	},
+	"RS_codec": {
+		"codeword_length": 255,
+		"message_length" : 239,
+		"bit_input"      : false
+	},
+	"Convolutional_interleaver": {
+		"num_registers"       : 12,
+		"register_length_step": 17
+	},
+	"Coarse_frequency_synchronizer": {
+		"frequency_resolution": 1000
+	},
+	"Carrier_synchronizer": {
+		"modulation_phase_offset"  : "Custom",
+		"damping_factor"           : 0.70710678118654757,
+		"normalized_loop_bandwidth": 0.005
+	},
+	"Symbol_synchronizer": {
+		"timing_error_detector"     : "Gardner (non-data-aided)",
+		"damping_factor"            : 1,
+		"normalized_loop_bandwidth" : 0.01,
+		"detector_gain"             : 2.7
+	}
+}
